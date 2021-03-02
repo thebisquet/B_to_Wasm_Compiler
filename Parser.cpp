@@ -4,6 +4,7 @@
 
 using namespace std;
 
+/*
 namespace N_ParseTree {
 	
 	/// C_ExpressionAST - Base class for all expression nodes.
@@ -91,4 +92,4 @@ static unique_ptr<C_ExpressionAST> ParsePrimaryToken() {
 }
 
 
-}
+}*/

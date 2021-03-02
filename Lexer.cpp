@@ -1,5 +1,5 @@
 //The lexer will read information from the Visual Basic source file and create tokens which get passed to the parser.
-#include <string>
+#include "compiler.h"
 
 using namespace std;
 

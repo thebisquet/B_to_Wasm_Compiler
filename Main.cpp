@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 /// <summary>
 /// Prints a token for use in debugging and error correcting.
 /// </summary>
@@ -11,7 +12,7 @@ using namespace std;
 void printToken(TOKEN* myToken) {
 
     cout << "Type: " << myToken->type << endl;
-    cout << "Value: " << myToken->strValue << endl;
+    cout << "Value: " << myToken->value << endl;
     cout << endl;
 }
 
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     infp.open(fileName);
 
-    cout << "Test...1" << endl << endl;
+    cout << "Test..." << endl << endl;
 
     if (infp.is_open()) {
         while (!infp.eof()) {

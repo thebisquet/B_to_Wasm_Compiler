@@ -4,23 +4,24 @@
 using namespace std;
 
 /// <summary>
-/// T_Token_Type defines what each token type is and what its numeric value is.
+/// Token_Type defines what each token type is and what its numeric value is.
 /// </summary>
-enum class T_Token_Type {
-	IDENTIFIER = 0,
-	NUMBER = 1,
-	PRINT = 5,
+enum Token_Type {
+	IDENTIFIER,
+	NUMBER,
+	STRING,
+	KEYWORD,
 };
 
 /// <summary>
 /// Structure of a single token.
 /// Type refers to the corresponding enum.
-/// strValue refers to the literal value grabbed from the token.
+/// value refers to the literal value grabbed from the token.
 /// </summary>
 struct TOKEN
 {
-	T_Token_Type type = T_Token_Type::IDENTIFIER;
-	string strValue = {};
+	Token_Type type = IDENTIFIER;
+	string value = {};
 };
 
 //Global Variables used for temporarily holding data.
@@ -40,6 +41,7 @@ static TOKEN* getToken(string input) {
 
 	//Initialize lastChar and while loop for iteration through the string
 	lastChar = input[i];
+	identifier.erase();
 	while(input[i] != NULL) {		
 
 		//Skip whitespace. Although there shouldn't be any.
@@ -55,14 +57,6 @@ static TOKEN* getToken(string input) {
 			lastChar = input[i];
 		}
 
-		//Return print token for print keyword
-		if (identifier == "PRINT") {
-			currentToken->type = T_Token_Type::PRINT;
-			currentToken->strValue = "PRINT";
-			identifier = {};
-			return currentToken;
-		}
-
 		//Check if lastChar is [0-9]
 		if (isdigit(lastChar) || lastChar == '.') {
 
@@ -74,15 +68,20 @@ static TOKEN* getToken(string input) {
 			} while (isdigit(lastChar) || lastChar == '.');
 
 			//Returns the number token we were able to create.
-			currentToken->type = T_Token_Type::NUMBER;
-			currentToken->strValue = identifier;
+			currentToken->type = NUMBER;
+			currentToken->value = identifier;
+			return currentToken;
+		}
+
+		if (identifier == "PRINT") {
+			currentToken->type = KEYWORD;
+			currentToken->value = identifier;
 			return currentToken;
 		}
 
 		//otherwise pass generic "identifier" token. Could also be a string to print. CatchAll
-		currentToken->type = T_Token_Type::IDENTIFIER;
-		currentToken->strValue = identifier;
-		identifier = {};
+		currentToken->type = STRING;
+		currentToken->value = identifier;
 		return currentToken;
 	}
 }

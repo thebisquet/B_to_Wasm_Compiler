@@ -4,38 +4,30 @@
 
 using namespace std;
 
+/// <summary>
+/// Prints a token for use in debugging and error correcting.
+/// </summary>
+/// <param name="myToken"> Token Type Defined In Lexer </param>
 void printToken(TOKEN* myToken) {
-    bool hasNode = false;
-
-    if (myToken->expression != nullptr)
-        hasNode = true;
-    else
-        hasNode = false;
 
     cout << "Type: " << myToken->type << endl;
-
-    if (hasNode)
-        cout << "Expression: " << hasNode << endl;
-    if (myToken->strValue.length() != 0)
-        cout << "String: " << myToken->strValue << endl;
-    if (myToken->value != INT64_MIN)
-        cout << "Value: " << myToken->value << endl;
+    cout << "Value: " << myToken->strValue << endl;
+    cout << endl;
 }
 
 int main(int argc, char* argv[]) {
 
     string inputString = {}, fileName = "BASIC_SOURCE.txt";
-    TOKEN* myToken;
+    TOKEN* myToken = new TOKEN();
     fstream infp;
 
     infp.open(fileName);
 
-    cout << "Opening File In Main...5"<< endl;
+    cout << "Test...1" << endl << endl;
 
     if (infp.is_open()) {
         while (!infp.eof()) {
             infp >> inputString;
-            cout << inputString << endl;
             myToken = getToken(inputString);
             printToken(myToken);
         }

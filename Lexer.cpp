@@ -3,39 +3,52 @@
 
 using namespace std;
 
-enum T_Token_Type {
-	T_PRINT = -2,
-	T_NUMBER = -3
+/// <summary>
+/// T_Token_Type defines what each token type is and what its numeric value is.
+/// </summary>
+enum class T_Token_Type {
+	IDENTIFIER = 0,
+	NUMBER = 1,
+	PRINT = 5,
 };
 
+/// <summary>
+/// Structure of a single token.
+/// Type refers to the corresponding enum.
+/// strValue refers to the literal value grabbed from the token.
+/// </summary>
 struct TOKEN
 {
-	string type = "";
-	TOKEN* expression = nullptr;
-	double value = INT64_MIN;
+	T_Token_Type type = T_Token_Type::IDENTIFIER;
 	string strValue = {};
 };
 
+//Global Variables used for temporarily holding data.
 static string identifier;
-static double numberValue;
 
-//Return next token from standard input.
+/// <summary>
+/// getToken takes a string and iterates through each character to determine if it is a keyword or literal value.
+/// This version will skip whitespace.
+/// </summary>
+/// <param name="input">string passed to getToken from main which is a single consecutive word never more than one.</param>
+/// <returns>The result of getToken is a TOKEN* defined in lexer.cpp. TYPE: and VALUE:</returns>
 static TOKEN* getToken(string input) {
 	int lastChar = {};
 	int i = 0;
 	size_t length = input.length();
 	TOKEN* currentToken = new TOKEN();
 
+	//Initialize lastChar and while loop for iteration through the string
 	lastChar = input[i];
 	while(input[i] != NULL) {		
 
-		//Skip whitespace.
+		//Skip whitespace. Although there shouldn't be any.
 		if (isspace(lastChar)) {
 			i++;
 			lastChar = input[i];
 		}
 
-		//Check if lastChar is alphanumeric::Adds each alnum character to the global string
+		//Check if lastChar is a letter [a-zA-Z]::Adds each character to the global string named "identifier"
 		while (isalpha(lastChar)) {
 			i++;
 			identifier += lastChar;
@@ -44,32 +57,32 @@ static TOKEN* getToken(string input) {
 
 		//Return print token for print keyword
 		if (identifier == "PRINT") {
-			currentToken->type = "printStatement";
-			currentToken->expression = new TOKEN();
+			currentToken->type = T_Token_Type::PRINT;
+			currentToken->strValue = "PRINT";
+			identifier = {};
 			return currentToken;
 		}
 
 		//Check if lastChar is [0-9]
 		if (isdigit(lastChar) || lastChar == '.') {
-			string numberString;
 
-			//Append all digits of the number to our string. There will be at least one.
+			//Append all digits of the number to "identifier" string. There will be at least one.
 			do {
-				numberString += lastChar;
+				identifier += lastChar;
 				i++;
 				lastChar = input[i];
 			} while (isdigit(lastChar) || lastChar == '.');
 
-			//Convert string to digit, store digit in global variable, and return number token.
-			numberValue = strtod(numberString.c_str(), nullptr);
-			currentToken->type = "numericLiteral";
-			currentToken->value = numberValue;
+			//Returns the number token we were able to create.
+			currentToken->type = T_Token_Type::NUMBER;
+			currentToken->strValue = identifier;
 			return currentToken;
 		}
 
-		//otherwise pass generic "identifier" token. Could also be a string to print
-		currentToken->type = "stringLiteral";
+		//otherwise pass generic "identifier" token. Could also be a string to print. CatchAll
+		currentToken->type = T_Token_Type::IDENTIFIER;
 		currentToken->strValue = identifier;
+		identifier = {};
 		return currentToken;
 	}
 }

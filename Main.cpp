@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     infp.open(fileName);
 
-    cout << "Test..." << endl << endl;
+    cout << "Test...1" << endl << endl;
 
     if (infp.is_open()) {
         while (!infp.eof()) {

@@ -7,10 +7,10 @@ using namespace std;
 /// Token_Type defines what each token type is and what its numeric value is.
 /// </summary>
 enum Token_Type {
-	IDENTIFIER,
-	NUMBER,
-	STRING,
-	KEYWORD,
+	IDENTIFIER,//0
+	NUMBER,//1
+	STRING,//2
+	KEYWORD,//3
 };
 
 /// <summary>
@@ -74,6 +74,16 @@ static TOKEN* getToken(string input) {
 		}
 
 		if (identifier == "PRINT") {
+			currentToken->type = KEYWORD;
+			currentToken->value = identifier;
+			return currentToken;
+		}
+		if (identifier == "IF") {
+			currentToken->type = KEYWORD;
+			currentToken->value = identifier;
+			return currentToken;
+		}
+		if (identifier == "GOTO") {
 			currentToken->type = KEYWORD;
 			currentToken->value = identifier;
 			return currentToken;

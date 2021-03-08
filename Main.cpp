@@ -9,29 +9,33 @@ using namespace std;
 /// Prints a token for use in debugging and error correcting.
 /// </summary>
 /// <param name="myToken"> Token Type Defined In Lexer </param>
-void printToken(TOKEN* myToken) {
-
-    cout << "Type: " << myToken->type << endl;
-    cout << "Value: " << myToken->value << endl;
-    cout << endl;
+void printTokens(vector<TOKEN*> tokenList) {
+    for (int i = 0; i < tokenList.size(); i++) {
+        cout << "Token " << i << endl << "\tType: " << tokenList.at(i)->type << endl;
+        cout << "\tValue: " << tokenList.at(i)->value << endl;
+    }
 }
 
 int main(int argc, char* argv[]) {
 
-    string inputString = {}, fileName = "BASIC_SOURCE.txt";
-    TOKEN* myToken = new TOKEN();
-    fstream infp;
+    string inputString = {};
 
+    // Dynamic Array of Tokens
+    vector<TOKEN*> tokenList;
+
+    // File System Setup
+    string fileName = "BASIC_SOURCE.txt";
+    fstream infp;
     infp.open(fileName);
 
-    cout << "Test...1" << endl << endl;
+    cout << "Build Test v1" << endl;
 
     if (infp.is_open()) {
         while (!infp.eof()) {
             infp >> inputString;
-            myToken = getToken(inputString);
-            printToken(myToken);
+            tokenList.push_back(getToken(inputString));
         }
         infp.close();
     }
+    printTokens(tokenList);
 }

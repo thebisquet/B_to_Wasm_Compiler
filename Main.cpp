@@ -99,57 +99,64 @@ static TOKEN* getToken(string input) {
 
 #pragma region Parser
 
-
-struct expressionNode {
+/// <summary>
+/// A node for a numeric literal argument attached to a statement.
+/// </summary>
+struct argument {
 	string type = {};
-	double value = -1;
+	double value = INT64_MIN;
 };
 
-struct statementNode {
+/// <summary>
+/// Individual component of a program. Has a type and arguments related to its type.
+/// </summary>
+struct statement {
 	string type = {};
-	expressionNode* express = nullptr;
+	argument* args = new argument();
 };
 
-struct rootNode {
-	vector<statementNode*> myRoot;
-};
+/// <summary>
+/// Takes in a token and parses the meaning behind the text.
+/// </summary>
+/// <param name="currentToken">Token that the statement will be requiring.</param>
+/// <returns>Returns a pointer to an argument node.</returns>
+static argument* findArgument(TOKEN* currentToken) {
 
-static expressionNode* parseExpression(TOKEN* currentTokens) {
-	expressionNode* myNode = new expressionNode;
+	argument* thisArgument = new argument();
 
-	if (currentTokens->type == NUMBER) {
-		myNode->type = "numericLiteral";
-		myNode->value = stoi(currentTokens->value);
-		return myNode;
+	if (currentToken->type == NUMBER) {
+		thisArgument->type = "numericLiteral";
+		thisArgument->value = stoi(currentToken->value);
 	}
+
+	return thisArgument;
 }
 
-static rootNode* parseTokens(vector<TOKEN*> tokenLists) {
+/// <summary>
+/// Takes in a dynamic array of tokens and begins parsing the relations between tokens.
+/// </summary>
+/// <param name="tokenLists">Dynamic Array of Tokens created by the Lexer.</param>
+/// <returns>Returns a dynamic array of parsed statements which will be our whole program.</returns>
+static vector<statement*> parseTokens(vector<TOKEN*> tokenLists) {
 
-	int i = 0;
-	rootNode* theRoot = new rootNode();
-	statementNode* newNode = new statementNode();
-	TOKEN* currentToken = tokenLists.at(i);
+	double i = 0;
+	vector<statement*> bigList;
+	statement* program = nullptr;
 
 	while (i < tokenLists.size()) {
-		if (currentToken->type == KEYWORD) {
-			if (currentToken->value == "PRINT") {
-				newNode->type = "printStatement";
-				newNode->express = new expressionNode();
-				i++;
-				currentToken = tokenLists.at(i);
-				if (currentToken->type == NUMBER) {
-					newNode->express->type = "numericLiteral";
-					newNode->express->value = stoi(currentToken->value);
-					theRoot->myRoot.push_back(newNode);
+		if (tokenLists.at(i)->type == KEYWORD) {
+			if (tokenLists.at(i)->value == "PRINT") {
+				if (tokenLists.at(i) != NULL) {
+					program = new statement();
+					program->type = "printStatement";
+					program->args = findArgument(tokenLists.at(i+1));
+					bigList.push_back(program);
 				}
 			}
 		}
 		i++;
-		currentToken = tokenLists.at(i);
 	}
-	
-	return theRoot;
+	return bigList;
 }
 #pragma endregion
 
@@ -160,24 +167,31 @@ static rootNode* parseTokens(vector<TOKEN*> tokenLists) {
 /// <param name="tokenList"> Vector list of Tokens -=- Token Type Defined In Lexer </param>
 void printTokens(vector<TOKEN*> tokenList) {
     for (int i = 0; i < tokenList.size(); i++) {
-        cout << "Token " << i << endl << "\tType: " << tokenList.at(i)->type << endl;
-        cout << "\tValue: " << tokenList.at(i)->value << endl;
+		cout << "Token{" << i << "} : " << "[Type: " << tokenList.at(i)->type << ", Value: " << tokenList.at(i)->value << "]" << endl;
     }
 }
 
-void printTree(statementNode* myNode) {
-	cout << "[" << endl << "\t{" << "\tType: " << myNode->type << endl << "\t\tExpression: {" << endl;
-	cout << "\t\t\tType: " << myNode->express->type << endl << "\t\t\tValue: " << myNode->express->value << endl;
-	cout << "\t\t}" << endl << "\t}" << endl << "]" << endl;
+/// <summary>
+/// Prints a dynamic array of statements which comprise our entire program.
+/// </summary>
+/// <param name="start">A very crude, basic syntax tree.</param>
+void printProgram(vector<statement*> start) {
+	for (int i = 0; i < start.size() ; i++) {
+		if (start.at(i)->type == "printStatement" ) {
+			cout << "Type: " << start.at(i)->type << endl;
+			cout << "\tArguments: " << start.at(i)->args->type << endl;
+			cout << "\tValue: " << start.at(i)->args->value << endl;
+		}
+	}
 }
 
 int main(int argc, char* argv[]) {
 
     // Dynamic Array of Tokens
-	vector<TOKEN*> correctList;
     vector<TOKEN*> tokenList;
-	TOKEN* temp;
-	rootNode theProgram;
+
+	// Dynamic Array of Statements
+	vector<statement*> start;
 
     // File System Setup
     string fileName = "BASIC_SOURCE.txt";
@@ -198,7 +212,8 @@ int main(int argc, char* argv[]) {
     }
 
     printTokens(tokenList);
-
+	start = parseTokens(tokenList);
+	printProgram(start);
 
 //++++++++++++++++++++++++ WORKHORSE +++++++++++++++++++++//
 }

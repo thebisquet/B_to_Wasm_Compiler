@@ -160,7 +160,85 @@ static vector<statement*> parseTokens(vector<TOKEN*> tokenLists) {
 }
 #pragma endregion
 
+#pragma region Emitter
+
+#pragma region Enumerators
+enum SECTION {
+	CUSTOM,
+	TYPE,
+	IMPORT,
+	FUNC,
+	TABLE,
+	MEMORY,
+	GLOBAL,
+	EXPORT,
+	START,
+	ELEMENT,
+	CODE,
+	DATA
+};
+
+enum ValueType {
+	i32 = 0x7f,
+	f32 = 0x7d
+};
+
+enum Opcodes {
+	END = 0x0b,
+	get_local = 0x20,
+	f32_add = 0x92
+};
+
+enum ExportType {
+	func = 0x00,
+	table = 0x01,
+	mem = 0x02,
+	global = 0x03
+};
+
+#pragma endregion
+
+void wasmGenerator(vector<statement*> parsedProgram) {
+
+	ofstream ofp;
+	ofp.open("wasmExample.wasm");
+
+	//WebAssembly Module Header
+	vector<unsigned char> byteBuffer = { 0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00 };
+
+
+	for (statement* current : parsedProgram) {
+		if (current->type == "printStatement") {
+			unsigned char printBuffer[76] = { 0x1, 0x8, 0x2, 0x60, 0x1, 0x7f, 0, 0x60,
+			0, 0, 0x2, 0xf, 0x1, 0x7, 0x63, 0x6f,
+			0x6e, 0x73, 0x6f, 0x6c, 0x65, 0x3, 0x6c, 0x6f,
+			0x67, 0, 0, 0x3, 0x2, 0x1, 0x1, 0x7,
+			0x1, 0x5, 0x50, 0x52, 0x49, 0x4e, 0x54, 0,
+			0x1, 0x8, 0x1, 0x6, 0, 0x41, current->args->value, 0x10,
+			0, 0, 0x18, 0x4, 0x6e, 0x61, 0x6d, 0x65,
+			0x1, 0x8, 0x1, 0, 0x5, 0x70, 0x72, 0x69,
+			0x6e, 0x74, 0x2, 0x7, 0x2, 0, 0x1, 0,
+			0, 0x1, 0, 0 };
+			byteBuffer.insert(byteBuffer.end(), begin(printBuffer), end(printBuffer));
+		}
+	}
+
+	//Write WASM Binary to output file.
+	for (int i = 0; i < byteBuffer.size(); i++) {
+		ofp << byteBuffer.at(i);
+	}
+
+
+
+	ofp.close();
+}
+
+
+#pragma endregion
+
 #pragma region Main
+
+#pragma region Print Functions
 /// <summary>
 /// Prints a dynamic array of tokens for use in debugging and error correction.
 /// </summary>
@@ -185,12 +263,39 @@ void printProgram(vector<statement*> start) {
 	}
 }
 
+/// <summary>
+/// Displays buffer of wasm binary file.
+/// </summary>
+/// <param name="byteBuffer">Integer array of the buffer.</param>
+void printBuffer() {
+	int i = 0;
+	string filename = "wasmExample.wasm";
+//	string filename = "printMe.wasm";
+	fstream infp;
+	infp.open(filename);
+
+	if (infp.is_open()) {
+		unsigned char myByte;
+		cout << "-----------WASM BUFFER-----------" << endl << endl;
+		while (!infp.eof()) {
+			infp >> myByte;
+			i++;
+			cout << showbase << setw(5) << hex << (int) myByte ;
+			if (i % 8 == 0) {
+				cout << endl;
+			}
+		}
+		infp.close();
+	}
+	cout << endl;
+}
+
+#pragma endregion
+
 int main(int argc, char* argv[]) {
 
-    // Dynamic Array of Tokens
+    // Dynamic Arrays for printing and debugging
     vector<TOKEN*> tokenList;
-
-	// Dynamic Array of Statements
 	vector<statement*> start;
 
     // File System Setup
@@ -198,22 +303,27 @@ int main(int argc, char* argv[]) {
     fstream infp;
     infp.open(fileName);
 
-    cout << "Build Test v1" << endl;
-
 //++++++++++++++++++++++++ WORKHORSE +++++++++++++++++++++//
 
     if (infp.is_open()) {
         string inputString = {};
+		cout << "-----------BASIC FILE-----------" << endl << endl;
         while (!infp.eof()) {
             infp >> inputString;
+			cout << inputString << endl;
             tokenList.push_back(getToken(inputString));
         }
         infp.close();
     }
 
+
+	cout << endl << "----------LIST OF TOKENS----------" << endl << endl;
     printTokens(tokenList);
 	start = parseTokens(tokenList);
+	cout << endl << "------------PARSE TREE------------" << endl << endl;
 	printProgram(start);
+	wasmGenerator(start);
+	printBuffer();
 
 //++++++++++++++++++++++++ WORKHORSE +++++++++++++++++++++//
 }

@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstdint>
 
 using namespace std;
 

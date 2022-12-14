@@ -1,2 +1,2 @@
-# B_to_Wasm_Compiler
-A compiler which converts the BASIC programming language into a web assembly bytecode for execution on client side browsers.
+# Visual_Basic_to_WebAssembly
+A website designed to showcase how modern technologies can breathe new life into obsolete languages.

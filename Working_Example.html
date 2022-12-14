@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BASIC to WebAssembly</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="stylesheet" href="styles/normalize.css">
+    <link rel="stylesheet" href="styles/layout.css">
+</head>
+
+<body>
+    <header>
+        <h2>Unstructured BASIC to WebAssembly</h2>
+    </header>
+    <main>
+        <h2>BASIC Input</h2>
+        <form>
+            <fieldset>
+                <p>
+                    <textarea type="text" id="basicInput" value="PRINT 42" rows="15" cols="70">     PRINT 42</textarea>
+                </p>
+            </fieldset>
+        </form>
+    </main>
+    <aside>
+        <h2>WebAssembly Text Format Output</h2>
+        <script src="myScript.js"></script>
+        <form>
+            <fieldset>
+                <p>
+                    <textarea type="text" id="wasmOutput" rows="15" cols="70">
+                    (module
+                        (table 0 anyfunc)
+                        (memory $0 1)
+                        (export "memory" (memory $0))
+                        (export "_PRINT" (func $_PRINT))
+                        (func $_PRINT (; 0 ;) (result i32)
+                            (i32.const 42)
+                        )
+                    )
+
+
+
+
+
+
+                    
+                    0x00, 0x61, 0x73, 0x6d,  0x01, 0x00, 0x00, 0x00,
+				    0x01, 0x85, 0x80, 0x80,  0x80, 0x00, 0x01, 0x60,
+			        0x00, 0x01, 0x7f, 0x03,  0x82, 0x80, 0x80, 0x80,
+			        0x00, 0x01, 0x00, 0x04,  0x84, 0x80, 0x80, 0x80,
+			        0x00, 0x01, 0x70, 0x00,  0x00, 0x05, 0x83, 0x80,
+			        0x80, 0x80, 0x00, 0x01,  0x00, 0x01, 0x06, 0x81,
+			        0x80, 0x80, 0x80, 0x00,  0x00, 0x07, 0x96, 0x80,
+				    0x80, 0x80, 0x00, 0x02,  0x06, 0x6d, 0x65, 0x6d,
+			        0x6f, 0x72, 0x79, 0x02,  0x00, 0x09, 0x5f, 0x5a,
+			        0x35, 0x50, 0x52, 0x49,  0x4e, 0x54, 0x76, 0x00,
+			        0x00, 0x0a, 0x8a, 0x80,  0x80, 0x80, 0x00, 0x01,
+			        0x84, 0x80, 0x80, 0x80,  0x00, 0x00, 0x41, 0x2a,
+			        0x0b</textarea>
+                </p>
+            </fieldset>
+        </form>
+    </aside>
+    <footer>
+        <h2>Instructions</h2>
+    </footer>
+</body>
+
+</html>
